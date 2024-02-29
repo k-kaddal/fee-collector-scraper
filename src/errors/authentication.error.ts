@@ -1,4 +1,4 @@
-import { CustomError } from '../utils/CustomError';
+import { CustomError } from '../utils/customError';
 
 export class AuthenticationError extends CustomError {
   statusCode: number = 401;
