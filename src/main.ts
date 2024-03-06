@@ -1,32 +1,23 @@
-import express from 'express';
-import mongoose, { ConnectOptions } from 'mongoose';
 import { config } from './config';
-import { UserRoute } from './modules/user/user.route';
-import bodyParser from 'body-parser';
-import { errorHandler } from './middleware/errorHandler.middleware';
+import { ContractService } from './services/contract.service';
+import { InitDatabase, SyncDatabase } from './utils/database';
+import routes from './routes';
 import logger from './utils/logger';
+import createServer from './utils/server';
 
-const app = express();
+export const app = createServer();
 
-app.use(bodyParser.json());
-app.use('/user', UserRoute);
+// Start Server
+app.listen(config.port, async () => {
+  logger.info(`Server is listening to port ${config.port}`);
 
-const options: ConnectOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  authSource: 'admin',
-  dbName: 'fee_collector',
-} as ConnectOptions;
+  // Init Database
+  await InitDatabase();
 
-mongoose
-  .connect(config.database_uri, options)
-  .then((result) => {
-    logger.info(`MongoDB connected`);
-  })
-  .catch((err) => console.log('error: ' + err));
+  // Create route
+  routes(app);
 
-app.use(errorHandler);
-
-app.listen(config.port, () => {
-  logger.info(`Fee Collector Scraper is listening to port ${config.port}`);
+  // Syncronise Database with FeeCollector events
+  const contractService = new ContractService();
+  SyncDatabase(contractService);
 });

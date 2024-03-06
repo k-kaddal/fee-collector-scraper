@@ -1,8 +1,9 @@
 import pino from 'pino';
+import { config } from '../config';
 
 let logger: any;
 
-if (process.env.NODE_ENV === 'production') {
+if (config.nodeEnv === 'production') {
   logger = pino({
     level: 'info',
   });
