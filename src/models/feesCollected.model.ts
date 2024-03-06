@@ -1,10 +1,10 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import { ObjectId } from 'mongoose';
+import { IFeesCollectedEvent } from './feesCollected.interface';
 
 @modelOptions({ schemaOptions: { collection: 'FeesCollectedEvents' } })
-export class FeesCollectedEventClass {
+export class FeesCollectedEventClass implements IFeesCollectedEvent {
   @prop({ required: true, unique: true })
-  _id: ObjectId;
+  _id: string;
 
   @prop({ required: true })
   token: string;
@@ -13,10 +13,10 @@ export class FeesCollectedEventClass {
   integrator: string;
 
   @prop({ required: true })
-  integratorFee: string;
+  integratorFee: BigInt;
 
   @prop({ required: true })
-  lifiFee: string;
+  lifiFee: BigInt;
 
   @prop({ required: true })
   blockNumber: number;

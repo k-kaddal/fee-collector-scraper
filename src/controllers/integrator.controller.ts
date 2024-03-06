@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ethers } from 'ethers';
-import { BadRequestError } from '../errors';
+import { BadRequestError } from '../utils/errors';
 import logger from '../utils/logger';
 import { EventService } from '../services/event.service';
 

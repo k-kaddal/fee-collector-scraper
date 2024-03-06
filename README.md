@@ -14,22 +14,26 @@ The Fee Collector Server is tailored to extract emitted events from the FeeColle
 
 ## Architecture
 
-- `contract.serivce` : responsible for all engagement with the smart-contract
+The following is key classes and functions to consider
+
+- `services/contract.serivce` : Responsible for all interactions with the smart contract.
     -  SyncFeeCollectorEvents() 
     -  initializeBlock() 
     -  loadFeeCollectorEvents(fromBlock, toBlock) 
 
-- `event.service` : responsible for all Event logic and EventModel
+- `services/event.service` : Responsible for all Event logic and EventModel.
     - CreateEvent(event)
     - GetEventsByIntegrator(integratorAddress)
     - GetLatestEvent()
 
-- `integrator.collector` : A Controller that handles integrato requests 
+- `collectors/integrator.collector` : A Controller that manages integrator requests.
     - GetEventsByIntegrator(request, response, next)
 
-- `feesCollected.model` : A typegoose schema for the feesCollected events
+- `models/feesCollected.model` : A typegoose schema for the feesCollected events
 
-- `database` : A database utils that is responsible for initialising and synchronising the db
+- `utils/database` : Database utilities responsible for initializing and synchronizing the database.
     - InitDatabase()
     - SyncDatabase(contractService)
+
+- `middleware/errorHandler.middleare` : Middleware for error handling, utilizing a global customError that parents NotFoundError, BadRequestError, and InternalError.
 

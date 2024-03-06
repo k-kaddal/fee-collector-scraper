@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BadRequestError } from '../errors';
+import { BadRequestError } from '../utils/errors';
 import { GetEventsByIntegrator } from './integrator.controller';
 import { EventService } from '../services/event.service';
 import { FeesCollectedEventClass } from '../models/feesCollected.model';

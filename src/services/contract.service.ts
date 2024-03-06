@@ -1,9 +1,10 @@
 import { Contract, JsonRpcProvider, ethers, EventLog } from 'ethers';
 import { LifiContract__factory } from './lifi-contract-types';
-import { InternalError } from '../errors';
+import { InternalError } from '../utils/errors';
 import { config } from '../config';
 import logger from '../utils/logger';
 import { EventService } from './event.service';
+import { IFeesCollectedEvent } from '../models/feesCollected.interface';
 
 export class ContractService {
   private initialBlock: number;
@@ -25,22 +26,22 @@ export class ContractService {
   async SyncFeeCollectorEvents() {
     logger.info('EventService: GetFeeCollectorEvents()');
 
+    // Initialise starting block
     await this.initializeBlock();
-
     const toBlock = await this.provider.getBlockNumber();
-    const allEvents = await this.loadFeeCollectorEvents(
-      this.initialBlock,
-      toBlock,
-    );
 
+    // load and store events from chain
+    await this.loadFeeCollectorEvents(this.initialBlock, toBlock);
+
+    // init latest block has been retrieved
     this.initialBlock = toBlock;
-
-    return allEvents;
+    return;
   }
 
   private async initializeBlock() {
     logger.info('EventService: initializeInitialBlock()');
 
+    // get the latest stored event's block number
     const latestEvent = await this.eventService.GetLatestEvent();
     if (latestEvent?.blockNumber) {
       this.initialBlock = latestEvent.blockNumber;
@@ -49,10 +50,7 @@ export class ContractService {
     return;
   }
 
-  private async loadFeeCollectorEvents(
-    fromBlock: number,
-    toBlock: number,
-  ): Promise<EventLog[]> {
+  private async loadFeeCollectorEvents(fromBlock: number, toBlock: number) {
     logger.info(`EventService: getAllEventsByBlocks()`);
     try {
       const batchSize = 3000;
@@ -74,16 +72,32 @@ export class ContractService {
         )) as EventLog[];
 
         for (const event of events) {
-          await this.eventService.CreateEvent(event);
+          const parsedEvent = this.parseFeeCollectorEvents(event);
+          await this.eventService.CreateEvent(parsedEvent);
         }
 
         allEvents = [...allEvents, ...events];
       }
 
-      return allEvents;
+      return;
     } catch (error) {
       logger.error(`Error getting events by blocks: ${error}`);
-      throw new InternalError();
+      throw error;
     }
+  }
+
+  private parseFeeCollectorEvents(event: EventLog): IFeesCollectedEvent {
+    const id = `${event.transactionHash}-${event.index}-${event.blockNumber}`;
+
+    const parsedEvent: IFeesCollectedEvent = {
+      _id: id,
+      token: event.args._token,
+      integrator: event.args._integrator,
+      integratorFee: BigInt(event.args._integratorFee),
+      lifiFee: BigInt(event.args._lifiFee),
+      blockNumber: event.blockNumber,
+    };
+
+    return parsedEvent;
   }
 }
