@@ -4,8 +4,6 @@ import { BadRequestError } from '../utils/errors';
 import logger from '../utils/logger';
 import { EventService } from '../services/event.service';
 
-const eventService = new EventService();
-
 export const GetEventsByIntegrator = async (
   req: Request,
   res: Response,
@@ -19,6 +17,7 @@ export const GetEventsByIntegrator = async (
       throw new BadRequestError('Invalid Ethereum address');
     }
 
+    const eventService = new EventService();
     const events = await eventService.GetEventsByIntegrator(integratorAddress);
 
     return res.status(200).json({ events: events });

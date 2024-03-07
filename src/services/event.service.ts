@@ -33,7 +33,7 @@ export class EventService {
 
       return events;
     } catch (error: any) {
-      throw new InternalError(`GetEventsByIntegrator: ${error.message}`);
+      throw error;
     }
   }
 

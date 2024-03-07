@@ -16,21 +16,21 @@ services:
       - fee-collector-network
     restart: unless-stopped
 
-  # fee-collector:
-  #   image: fee-collector-image
-  #   container_name: fee-collector-container
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - '${PORT}:${PORT}'
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - fee-collector-network
-  #   depends_on:
-  #     - mongodb
-  #   restart: always
+  fee-collector:
+    image: fee-collector-image
+    container_name: fee-collector-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:${PORT}'
+    env_file:
+      - .env
+    networks:
+      - fee-collector-network
+    depends_on:
+      - mongodb
+    restart: always
 
 networks:
   fee-collector-network:

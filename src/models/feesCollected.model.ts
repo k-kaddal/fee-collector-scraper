@@ -1,7 +1,16 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import {
+  Severity,
+  getModelForClass,
+  modelOptions,
+  mongoose,
+  prop,
+} from '@typegoose/typegoose';
 import { IFeesCollectedEvent } from './feesCollected.interface';
 
-@modelOptions({ schemaOptions: { collection: 'FeesCollectedEvents' } })
+@modelOptions({
+  options: { allowMixed: Severity.ALLOW },
+  schemaOptions: { collection: 'FeesCollectedEvents' },
+})
 export class FeesCollectedEventClass implements IFeesCollectedEvent {
   @prop({ required: true, unique: true })
   _id: string;

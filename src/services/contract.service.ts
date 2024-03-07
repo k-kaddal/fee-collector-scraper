@@ -81,7 +81,7 @@ export class ContractService {
 
       return;
     } catch (error) {
-      logger.error(`Error getting events by blocks: ${error}`);
+      logger.error(`loadFeeCollectorEvents: ${error}`);
       throw error;
     }
   }
