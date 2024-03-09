@@ -16,7 +16,7 @@ const mockedEvents = [
 
 jest.mock('../services/event.service', () => ({
   EventService: jest.fn().mockImplementation(() => ({
-    GetEventsByIntegrator: jest.fn().mockResolvedValue(mockedEvents), // Mocking the result of GetEventsByIntegrator
+    GetEventsByIntegrator: jest.fn().mockResolvedValue(mockedEvents),
   })),
 }));
 
